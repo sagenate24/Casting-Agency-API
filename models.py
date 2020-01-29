@@ -1,18 +1,13 @@
 
 import os
 from flask import Flask
-from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from datetime import datetime
 
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
-# app = Flask(__name__)
-# moment = Moment(app)
-# app.config.from_object('config')
-db_path = os.environ['DATABASE_URL']
+db_path = os.environ.get('DATABASE_URL')
 db = SQLAlchemy()
 
 def setup_db(app, db_path=db_path):
