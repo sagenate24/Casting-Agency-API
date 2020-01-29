@@ -1,4 +1,5 @@
 
+import os
 from flask import Flask
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -8,12 +9,18 @@ from datetime import datetime
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
-app = Flask(__name__)
-moment = Moment(app)
-app.config.from_object('config')
-db = SQLAlchemy(app)
+# app = Flask(__name__)
+# moment = Moment(app)
+# app.config.from_object('config')
+db_path = os.environ['DATABASE_URL']
+db = SQLAlchemy()
 
-migrate = Migrate(app, db)
+def setup_db(app, db_path=db_path):
+  app.config["SQLALCHEMY_DATABASE_URI"] = db_path
+  app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+  db.app = app
+  db.init_app(app)
+  db.create_all()
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -22,55 +29,34 @@ migrate = Migrate(app, db)
 #  Actor Model
 #  ----------------------------------------------------------------
 class Actor(db.Model):
-  __tablename__ = 'Movie'
+  __tablename__ = 'Actor'
 
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String, nullable=False)
   age = db.Column(db.Integer, nullable=False)
   gender = db.Column(db.String, nullable=False)
 
-  '''
-  get_name()
-    name of the Actor
-  '''
   def get_name(self):
     return self.name
 
-  '''
-  insert()
-    inserts a new model into a database
-    the model must have a unique name
-    EXAMPLE
-      actor = Actor(name=name, age=age, gender=gender)
-      actor.insert()
-  '''
   def insert(self):
     db.session.add(self)
     db.session.commit()
 
-  '''
-  update()
-    updates a model into a database
-    the model must exist in the database
-    EXAMPLE
-      actor = Actor.query.get(actor_id)
-      actor.name = 'Nate'
-      actor.update()
-  '''
   def update(self):
     db.session.commit()
 
-  '''
-  delete()
-    deletes a model from the database
-    the model must exist in the database
-    EXAMPLE
-      actor = Actor.query.get(actor_id)
-      actor.delete()
-  '''
   def delete(self):
     db.session.delete(self)
     db.session.commit()
+  
+  def format(self):
+    return {
+      'id': self.id,
+      'name': self.name,
+      'age': self.age,
+      'gender': self.gender
+    }
 
 #  Movie Model
 #  ----------------------------------------------------------------
@@ -81,45 +67,23 @@ class Movie(db.Model):
   title = db.Column(db.String, nullable=False)
   release_date = db.Column(db.DateTime(), default=datetime.utcnow)
 
-  '''
-  get_title()
-    title of the Movie
-  '''
   def get_title(self):
     return self.title
 
-  '''
-  insert()
-    inserts a new model into a database
-    the model must have a unique title
-    EXAMPLE
-      movie = Movie(title=title, release_date=release_date)
-      movie.insert()
-  '''
   def insert(self):
     db.session.add(self)
     db.session.commit()
 
-    '''
-  update()
-    updates a model into a database
-    the model must exist in the database
-    EXAMPLE
-      movie = Movie.query.get(movie_id)
-      movie.title = 'New Adventure'
-      movie.update()
-  '''
   def update(self):
     db.session.commit()
 
-  '''
-  delete()
-    deletes a model from the database
-    the model must exist in the database
-    EXAMPLE
-      movie = Movie.query.get(movie_id)
-      movie.delete()
-  '''
   def delete(self):
     db.session.delete(self)
     db.session.commit()
+
+  def format(self):
+    return {
+      'id': self.id,
+      'title': self.title,
+      'release_date': self.release_date
+    }

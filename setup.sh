@@ -1,1 +1,1 @@
-
+DATABASE_URL=postgres://nsage@localhost:5432/casting

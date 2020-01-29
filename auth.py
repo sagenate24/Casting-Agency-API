@@ -7,7 +7,7 @@ from urllib.request import urlopen
 
 AUTH0_DOMAIN = 'nategreat.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'drinks' # TODO: Create api audience
+API_AUDIENCE = 'casting'
 
 ## AuthError Exception
 '''
