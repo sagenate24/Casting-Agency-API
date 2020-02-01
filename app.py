@@ -5,20 +5,6 @@ from flask_cors import CORS
 from models import setup_db, Actor, Movie
 from auth import AuthError, requires_auth
 
-DEFAULT_OFFSET = 1
-DEFAULT_LIMIT = 30
-# Get a list of paginated questions
-def paginate_response(request, selection):
-  offset = request.args.get('offset', DEFAULT_OFFSET, type=int)
-  limit = request.args.get('limit', DEFAULT_LIMIT, type=int)
-  start =  (offset - 1) * limit
-  end = start + limit
-
-  formatted_selection = [item.format() for item in selection]
-  paginated_selection = formatted_selection[start:end]
-
-  return paginated_selection
-
 def create_app(test_config=None):
   # Create and configure the app
   app = Flask(__name__)
@@ -27,25 +13,24 @@ def create_app(test_config=None):
 
   #  GET Actors
   #  ----------------------------------------------------------------
+  # TODO: retrieve paginated list
   @app.route('/actors')
   @requires_auth('get:actors')
   def get_actors(jwt):
-    try:
-      return jsonify({
-        'success': True,
-        'actors': paginate_response(request, Actor.query.order_by(Actor.id).all())
-      })
-    except:
-      abort(422)
+    return jsonify({
+      'success': True,
+      'actors': list(map(Actor.format, Actor.query.all()))
+    })
 
   #  GET Movies
   #  ----------------------------------------------------------------
+  # TODO: retrieve paginated list
   @app.route('/movies')
   @requires_auth('get:movies')
   def get_movies(jwt):
     return jsonify({
       'success': True,
-      'movies': paginate_response(request, Movie.query.order_by(Movie.id).all())
+      'movies': list(map(Movie.format, Movie.query.all()))
     })
 
   #  POST Actors
@@ -244,7 +229,7 @@ def create_app(test_config=None):
 
   return app
 
-# app = create_app()
+app = create_app()
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=8080, debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=True)

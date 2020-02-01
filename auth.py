@@ -161,7 +161,7 @@ def verify_decode_jwt(token):
 '''
 @requires_auth(permission) decorator method
   @INPUTS
-    permission: string permission (i.e. 'post:actors')
+    permission: string permission (i.e. 'post:drink')
 
   - it should use the get_token_auth_header method to get the token
   - it should use the verify_decode_jwt method to decode the jwt
