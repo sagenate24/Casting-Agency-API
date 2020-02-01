@@ -221,7 +221,7 @@ The API will return three error types with multiple different error messages whe
 
 #### Testing remote server using postman
 
-- Import the postman collection.
+- Import the postman collection `./casting agency.postman_collection.json`.
   - This collection has 3 roles that have specific permissions detailed below.
   - Roles
     - Public
